@@ -4,7 +4,7 @@ flutter_native_splash:
   # background_image: "assets/background.png"
   android: true
   ios: true
-  web: false
+  web: true
 
  android_12:
  color: "#42a5f5"
