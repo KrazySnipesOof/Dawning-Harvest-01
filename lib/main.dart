@@ -269,16 +269,13 @@ class HomePage extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/harvest_logo.png',
-              height: 24,
-            ),
-            const SizedBox(width: 8),
-            const Text('HARVEST'),
-          ],
-        ),
+                       title: const Row(
+                 children: [
+                   Icon(Icons.agriculture, color: Colors.green),
+                   SizedBox(width: 8),
+                   Text('HARVEST'),
+                 ],
+               ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
@@ -779,11 +776,20 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Image.asset(
-                      'assets/images/vertical_farming.png',
-                      height: 200,
-                    ),
+                                               const SizedBox(width: 16),
+                           Container(
+                             height: 200,
+                             width: 200,
+                             decoration: BoxDecoration(
+                               color: Colors.green.withOpacity(0.2),
+                               borderRadius: BorderRadius.circular(8),
+                             ),
+                             child: const Icon(
+                               Icons.agriculture,
+                               size: 80,
+                               color: Colors.green,
+                             ),
+                           ),
                     IconButton(
                       icon: const Icon(
                         Icons.play_circle_fill,
