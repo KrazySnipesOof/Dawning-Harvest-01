@@ -85,10 +85,11 @@
     window.addEventListener('load', function(ev) {
       console.log('Page loaded, starting Flutter initialization...');
       
-      // Download main.dart.js with modern Flutter loader
-      _flutter.loader.load({
-        serviceWorkerSettings: {
-          serviceWorkerVersion: "{{flutter_service_worker_version}}",
+      // Use Flutter's automatic initialization for local development
+      // This will work for both local development and production builds
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: null,
         },
         onEntrypointLoaded: function(engineInitializer) {
           console.log('Entry point loaded, initializing engine...');
