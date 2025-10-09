@@ -82,82 +82,32 @@
   </div>
 
   <script>
-    // Set up error handling
-    window.addEventListener('error', function(e) {
-      console.error('Application error:', e);
-      document.getElementById('error-text').textContent = 'Error loading application. Please refresh the page.';
-      document.getElementById('error-text').style.display = 'block';
-    });
-
-    // Function to show error
-    function showError(message) {
-      document.getElementById('error-text').textContent = message;
-      document.getElementById('error-text').style.display = 'block';
-      document.querySelector('.loading-spinner').style.display = 'none';
-      document.querySelector('.loading-text').style.display = 'none';
-    }
-
-    // Function to hide loading and show app
-    function hideLoading() {
-      document.querySelector('.loading-container').style.display = 'none';
-    }
-
     window.addEventListener('load', function(ev) {
       console.log('Page loaded, starting Flutter initialization...');
       
-      // Wait for Flutter scripts to load with multiple attempts
-      let attempts = 0;
-      const maxAttempts = 5;
-      
-      function tryLoadFlutter() {
-        attempts++;
-        console.log(`Attempt ${attempts}/${maxAttempts}: Checking for Flutter loader...`);
-        
-        // Check if Flutter loader is available
-        if (typeof _flutter === 'undefined' || !_flutter.loader) {
-          if (attempts < maxAttempts) {
-            console.log('Flutter loader not found, retrying...');
-            setTimeout(tryLoadFlutter, 1000);
-            return;
-          }
-          console.error('Flutter loader not found after all attempts');
-          showError('Flutter loader not found. Please refresh the page or check your internet connection.');
-          return;
+      // Download main.dart.js with modern Flutter loader
+      _flutter.loader.load({
+        serviceWorkerSettings: {
+          serviceWorkerVersion: "{{flutter_service_worker_version}}",
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          console.log('Entry point loaded, initializing engine...');
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            console.log('Engine initialized, running app...');
+            // Hide loading screen
+            document.querySelector('.loading-container').style.display = 'none';
+            appRunner.runApp();
+          }).catch(function(error) {
+            console.error('Engine initialization failed:', error);
+            document.getElementById('error-text').textContent = 'Failed to initialize Flutter engine. Please refresh the page.';
+            document.getElementById('error-text').style.display = 'block';
+          });
         }
-
-        console.log('Flutter loader found, starting load...');
-
-        // Download main.dart.js with timeout
-        const loadTimeout = setTimeout(function() {
-          console.error('Flutter load timeout');
-          showError('Loading timeout. Please refresh the page.');
-        }, 30000); // 30 second timeout
-
-        _flutter.loader.load({
-          serviceWorkerSettings: {
-            serviceWorkerVersion: {{flutter_service_worker_version}},
-          },
-          onEntrypointLoaded: function(engineInitializer) {
-            console.log('Entry point loaded, initializing engine...');
-            clearTimeout(loadTimeout);
-            engineInitializer.initializeEngine().then(function(appRunner) {
-              console.log('Engine initialized, running app...');
-              hideLoading();
-              appRunner.runApp();
-            }).catch(function(error) {
-              console.error('Engine initialization failed:', error);
-              showError('Failed to initialize Flutter engine. Please refresh the page.');
-            });
-          }
-        }).catch(function(error) {
-          console.error('Flutter loader failed:', error);
-          clearTimeout(loadTimeout);
-          showError('Failed to load Flutter application. Please refresh the page.');
-        });
-      }
-      
-      // Start trying to load Flutter
-      setTimeout(tryLoadFlutter, 500); // Initial delay
+      }).catch(function(error) {
+        console.error('Flutter loader failed:', error);
+        document.getElementById('error-text').textContent = 'Failed to load Flutter application. Please refresh the page.';
+        document.getElementById('error-text').style.display = 'block';
+      });
     });
   </script>
 </body>
